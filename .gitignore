@@ -1,0 +1,5 @@
+.DS_Store
+*.local
+config.local.js
+.env
+.env.*
