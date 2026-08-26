@@ -247,7 +247,7 @@
         outline-offset: 2px;
       }
 
-      input,
+      input {
         width: 100%;
         min-height: var(--control-h);
         height: var(--control-h);
@@ -614,7 +614,7 @@
       }
 
       .home-body {
-        padding: calc(var(--home-topbar-height) + clamp(0.75rem, 1.5vh, 1rem)) var(--pad-x)
+        padding: calc(var(--home-topbar-height) + clamp(6rem, 8vh, 7rem)) var(--pad-x)
           clamp(1.25rem, 3vh, 2rem);
       }
 
@@ -661,9 +661,13 @@
       .history-section-header {
         display: flex;
         flex-wrap: wrap;
-        align-items: flex-end;
+        align-items: center;
         justify-content: space-between;
         gap: 0.75rem 1rem;
+        padding: 1rem 1.25rem;
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        background: var(--surface-soft);
       }
 
       .history-date-filter {
@@ -875,6 +879,7 @@
       }
 
       .pie-center {
+        display: none;
         font-size: clamp(0.78rem, 0.72rem + 0.3vw, 0.98rem);
         font-weight: 800;
         letter-spacing: -0.02em;
@@ -1080,7 +1085,7 @@
       }
 
       .home-history {
-        margin-top: clamp(1.5rem, 3vh, 2.5rem);
+        margin-top: clamp(3rem, 6vh, 4.5rem);
         padding: clamp(1.15rem, 2vw, 1.5rem);
         border: 1px solid var(--border-subtle);
         border-radius: var(--radius-lg);
@@ -1716,58 +1721,646 @@
           font-size: clamp(1.4rem, 4vw, 2rem);
         }
       }
+
+      /* Product-wide dashboard polish */
+      body.on-home {
+        background: #eef2f7;
+      }
+
+      .home-topbar {
+        position: sticky;
+        min-height: 7.25rem;
+        padding: 1.5rem var(--pad-x);
+        grid-template-columns: auto auto 1fr;
+        background: linear-gradient(135deg, #24205f 0%, #3730a3 58%, #4f46e5 100%);
+        box-shadow: 0 10px 28px rgba(30, 27, 75, 0.18);
+      }
+
+      .home-menu-toggle {
+        grid-column: 1;
+        justify-self: start;
+        display: inline-grid;
+        place-items: center;
+        width: 2.75rem;
+        height: 2.75rem;
+        padding: 0;
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        border-radius: 9px;
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+        cursor: pointer;
+        transition: background 0.15s ease, border-color 0.15s ease;
+      }
+
+      .home-menu-toggle:hover,
+      .home-menu-toggle[aria-expanded="true"] {
+        border-color: rgba(255, 255, 255, 0.55);
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .home-menu-toggle svg {
+        width: 1.25rem;
+        height: 1.25rem;
+      }
+
+      .home-menu {
+        position: absolute;
+        top: calc(100% + 0.75rem);
+        left: var(--pad-x);
+        z-index: 5;
+        width: min(14rem, calc(100vw - 2 * var(--pad-x)));
+        padding: 0.5rem;
+        border: 1px solid #dbe3ed;
+        border-radius: 12px;
+        background: #fff;
+        box-shadow: 0 16px 34px rgba(15, 23, 42, 0.2);
+      }
+
+      .home-menu[hidden] {
+        display: none;
+      }
+
+      .home-menu-label {
+        margin: 0;
+        padding: 0.55rem 0.65rem 0.45rem;
+        color: #64748b;
+        font-size: 0.7rem;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .home-menu .home-sign-out-btn {
+        width: 100%;
+        margin: 0;
+        border-color: #fecaca;
+        background: #fff7f7;
+        color: #b91c1c;
+        text-align: left;
+      }
+
+      .home-menu .home-sign-out-btn:hover:not(:disabled) {
+        border-color: #fca5a5;
+        background: #fef2f2;
+      }
+
+      .home-topbar h1 {
+        font-size: clamp(1.55rem, 1.2rem + 1.6vw, 2.45rem);
+        letter-spacing: 0.04em;
+        justify-self: start;
+        text-align: left;
+      }
+
+      .home-user-name {
+        font-size: clamp(0.9rem, 0.84rem + 0.3vw, 1.05rem);
+      }
+
+      .home-remaining {
+        margin: 0;
+        font-size: clamp(0.78rem, 0.72rem + 0.2vw, 0.88rem);
+      }
+
+      .home-sign-out-btn {
+        margin-top: 0.45rem;
+        padding: 0.42rem 0.8rem;
+        border-radius: 7px;
+        background: rgba(255, 255, 255, 0.12);
+      }
+
+      .home-body {
+        max-width: 1500px;
+        margin: 0 auto;
+        padding: clamp(1.5rem, 3vw, 2.75rem) var(--pad-x)
+          clamp(2rem, 4vw, 3.5rem);
+      }
+
+      .home-dashboard {
+        column-gap: clamp(1rem, 2vw, 1.75rem);
+        row-gap: clamp(1rem, 2vw, 1.75rem);
+      }
+
+      .chart-block,
+      .home-history {
+        padding: clamp(1rem, 1.6vw, 1.35rem);
+        border-color: #dbe3ed;
+        border-radius: 14px;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.055);
+      }
+
+      .chart-title,
+      .history-section-title {
+        margin-bottom: 0.85rem;
+        font-size: clamp(1.15rem, 1rem + 0.55vw, 1.45rem);
+        letter-spacing: -0.025em;
+      }
+
+      .chart-placeholder {
+        --chart-frame-size: clamp(240px, 28vw, 330px);
+        padding: clamp(1rem, 1.8vw, 1.35rem);
+        border-color: #dbe3ed;
+        background: #f8fafc;
+      }
+
+      .chart-empty {
+        font-size: 0.9rem;
+        font-weight: 700;
+      }
+
+      .chart-income-total {
+        margin: 0.85rem 0 0;
+        padding: 0.75rem 0.9rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 9px;
+        background: #f8fafc;
+        color: #475569;
+        font-size: 0.9rem;
+      }
+
+      .entry-tabs,
+      .history-tabs {
+        margin-top: 0.85rem;
+        border-color: #dbe3ed;
+        background: #eef2f7;
+      }
+
+      .entry-tabs button,
+      .history-tabs button {
+        border-radius: 7px;
+        font-size: 0.9rem;
+      }
+
+      .entry-tabs button[aria-selected="true"],
+      .history-tabs button[aria-selected="true"] {
+        color: #3730a3;
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+      }
+
+      .home-history {
+        margin-top: clamp(1.5rem, 3vw, 2.5rem);
+      }
+
+      .history-section-header {
+        padding: 0.9rem 1rem;
+        border-color: #dbe3ed;
+        background: #f1f5f9;
+      }
+
+      .history-panel {
+        margin-top: 0.85rem;
+      }
+
+      .history-table-wrap {
+        border-color: #dbe3ed;
+      }
+
+      .history-table th {
+        color: #334155;
+        background: #f8fafc;
+      }
+
+      .history-table th,
+      .history-table td {
+        padding: 0.72rem 0.8rem;
+      }
+
+      @media (max-width: 720px) {
+        .home-topbar {
+          grid-template-columns: auto 1fr;
+          min-height: 6.5rem;
+          padding: 1.1rem var(--pad-x);
+        }
+
+        .home-topbar h1 {
+          grid-column: 2;
+          text-align: left;
+          white-space: normal;
+        }
+
+        .home-user-wrap {
+          grid-column: 1 / -1;
+          justify-self: start;
+          align-items: flex-start;
+          text-align: left;
+        }
+
+        .home-menu {
+          left: var(--pad-x);
+        }
+
+        .chart-placeholder {
+          --chart-frame-size: min(76vw, 300px);
+        }
+
+        .history-section-header {
+          align-items: stretch;
+        }
+
+        .history-section-title {
+          align-self: flex-start;
+        }
+
+        .history-date-filter {
+          margin-left: 0;
+          align-items: stretch;
+          flex-basis: 100%;
+        }
+
+        .history-date-filter-toolbar {
+          justify-content: stretch;
+        }
+
+        .history-date-fields {
+          width: 100%;
+        }
+      }
+
+      /* Responsive visual rhythm */
+      body.on-home {
+        background:
+          linear-gradient(135deg, rgba(224, 231, 255, 0.5), transparent 38%),
+          #f4f7fb;
+      }
+
+      .home-topbar {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+      }
+
+      .home-body {
+        padding: clamp(1.5rem, 3.5vw, 3.25rem) var(--pad-x)
+          clamp(2.5rem, 5vw, 4.5rem);
+      }
+
+      .home-dashboard {
+        align-items: stretch;
+        gap: clamp(1.25rem, 2.5vw, 2.25rem);
+      }
+
+      .chart-block {
+        align-self: stretch;
+        overflow: hidden;
+        border-top: 4px solid #f97316;
+        background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+      }
+
+      .chart-block--investments {
+        border-top-color: #14b8a6;
+      }
+
+      .chart-title {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin-bottom: 1rem;
+        font-size: clamp(1.2rem, 1.05rem + 0.65vw, 1.55rem);
+      }
+
+      .chart-title::before {
+        content: "";
+        width: 0.65rem;
+        height: 0.65rem;
+        flex: 0 0 auto;
+        border-radius: 50%;
+        background: #f97316;
+        box-shadow: 0 0 0 5px rgba(249, 115, 22, 0.12);
+      }
+
+      .chart-block--investments .chart-title::before {
+        background: #14b8a6;
+        box-shadow: 0 0 0 5px rgba(20, 184, 166, 0.12);
+      }
+
+      .chart-placeholder {
+        --chart-frame-size: clamp(220px, 25vw, 300px);
+        --chart-size: calc(var(--chart-frame-size) * 0.8);
+        border-radius: 12px;
+        background: linear-gradient(145deg, #f8fafc 0%, #eef3f8 100%);
+      }
+
+      .home-history {
+        margin-top: clamp(1.75rem, 3.5vw, 3rem);
+        padding: clamp(1rem, 2vw, 1.5rem);
+        border-top: 4px solid #6366f1;
+        background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+      }
+
+      .history-section-header {
+        gap: 1rem 1.5rem;
+        padding: clamp(0.9rem, 1.5vw, 1.25rem);
+      }
+
+      @media (min-width: 901px) {
+        .home-body {
+          padding-left: clamp(2rem, 5vw, 5rem);
+          padding-right: clamp(2rem, 5vw, 5rem);
+        }
+      }
+
+      @media (max-width: 900px) {
+        .home-body {
+          padding: 1.75rem clamp(1rem, 4vw, 2rem) 3rem;
+        }
+
+        .chart-placeholder {
+          --chart-frame-size: clamp(220px, 42vw, 290px);
+        }
+      }
+
+      @media (max-width: 720px) {
+        .home-body {
+          padding: 1.25rem 1rem 2.5rem;
+        }
+
+        .chart-block,
+        .home-history {
+          border-radius: 12px;
+        }
+
+        .chart-placeholder {
+          --chart-frame-size: min(78vw, 300px);
+        }
+
+        .history-section-header {
+          padding: 0.85rem;
+        }
+      }
+
+      /* Transaction history workspace */
+      .home-history {
+        padding: 0;
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+      }
+
+      .history-section-header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 1rem 2rem;
+        padding: 1.25rem 1.5rem;
+        border: 1px solid #dbe3ed;
+        border-top: 4px solid #6366f1;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #ffffff 0%, #f4f7ff 100%);
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.055);
+      }
+
+      .history-section-title {
+        font-size: clamp(1.35rem, 1.1rem + 0.8vw, 1.8rem);
+        letter-spacing: -0.035em;
+      }
+
+      .history-date-filter {
+        margin-left: 0;
+        align-items: stretch;
+        grid-column: 2;
+        justify-self: end;
+      }
+
+      .history-date-filter-toolbar {
+        justify-content: flex-end;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+      }
+
+      .history-date-filter-heading {
+        color: #475569;
+      }
+
+      .history-filter-status {
+        align-self: flex-end;
+        width: fit-content;
+      }
+
+      .history-tabs {
+        margin-top: 1rem;
+        padding: 0.3rem;
+        border-color: #dbe3ed;
+        background: #e8eef6;
+      }
+
+      .history-tabs button {
+        min-height: 2.8rem;
+        color: #64748b;
+      }
+
+      .history-tabs button[aria-selected="true"] {
+        color: #3730a3;
+        background: #ffffff;
+        box-shadow: 0 3px 8px rgba(15, 23, 42, 0.1);
+      }
+
+      .history-panel {
+        margin-top: 1rem;
+        min-height: 10rem;
+        max-height: min(28rem, 48vh);
+        padding: 1rem;
+        border: 1px solid #dbe3ed;
+        border-radius: 14px;
+        background: #f8fafc;
+      }
+
+      .history-empty {
+        min-height: 7rem;
+        display: grid;
+        place-items: center;
+        margin: 0;
+        padding: 1.5rem;
+        border: 1px dashed #cbd5e1;
+        border-radius: 10px;
+        background: #ffffff;
+        color: #64748b;
+      }
+
+      .history-table-wrap {
+        background: #ffffff;
+      }
+
+      @media (max-width: 720px) {
+        .history-section-header {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+          padding: 1rem;
+        }
+
+        .history-date-filter-toolbar {
+          justify-content: stretch;
+        }
+
+        .history-date-filter {
+          grid-column: 1;
+          justify-self: stretch;
+        }
+
+        .history-filter-status {
+          align-self: flex-start;
+        }
+
+        .history-panel {
+          padding: 0.65rem;
+        }
+      }
+
+      .chart-legend {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-content: center;
+        gap: 0.6rem 0.8rem;
+        max-height: none;
+        overflow: visible;
+      }
+
+      .chart-legend li {
+        min-width: 0;
+        column-gap: 0.35rem;
+        row-gap: 0.12rem;
+      }
+
+      .legend-title {
+        font-size: 0.68rem;
+        line-height: 1.1;
+        overflow-wrap: normal;
+        word-break: normal;
+      }
+
+      .legend-desc {
+        font-size: 0.59rem;
+        line-height: 1.25;
+      }
+
+      .legend-dot {
+        width: 0.68rem;
+        height: 0.68rem;
+      }
+
+      .legend-line {
+        width: 1.1rem;
+      }
+
+      @media (max-width: 720px) {
+        .chart-wrap {
+          row-gap: 0.65rem;
+        }
+
+        .chart-legend {
+          width: 100%;
+          gap: 0.55rem 0.75rem;
+        }
+      }
+
+      @media (min-width: 721px) {
+        .chart-placeholder {
+          --chart-frame-size: clamp(230px, 22vw, 280px);
+        }
+      }
+
+      .chart-placeholder:has(.chart-legend.is-empty) .chart-wrap {
+        grid-template-columns: 1fr;
+        justify-items: center;
+      }
+
+      .chart-placeholder:has(.chart-legend.is-empty) .chart-panel {
+        grid-column: 1;
+      }
+
+      .chart-placeholder:has(.chart-legend.is-empty) .chart-legend {
+        display: none;
+      }
+
+      /* Focused login presentation */
+      body:not(.on-home) {
+        background: #eef2f7;
+      }
+
+      body:not(.on-home) .brand {
+        min-height: 100dvh;
+        padding: clamp(2rem, 6vw, 6rem) clamp(1.5rem, 7vw, 7rem);
+        background:
+          linear-gradient(135deg, rgba(15, 23, 42, 0.18), transparent 48%),
+          linear-gradient(145deg, #312e81 0%, #4338ca 55%, #6366f1 100%);
+      }
+
+      body:not(.on-home) .brand-inner {
+        width: min(100%, 34rem);
+      }
+
+      body:not(.on-home) .eyebrow {
+        display: none;
+      }
+
+      body:not(.on-home) .brand h1 {
+        font-size: clamp(3rem, 5.8vw, 5.8rem);
+        line-height: 0.98;
+        letter-spacing: -0.055em;
+        text-wrap: balance;
+      }
+
+      body:not(.on-home) .lede {
+        max-width: 30ch;
+        margin-top: clamp(1.25rem, 2.5vw, 2rem);
+        margin-bottom: 0;
+        font-size: clamp(1rem, 0.9rem + 0.45vw, 1.2rem);
+        line-height: 1.55;
+      }
+
+      body:not(.on-home) .features {
+        display: none;
+      }
+
+      body:not(.on-home) .auth {
+        align-items: center;
+        padding: clamp(1.5rem, 5vw, 5rem) clamp(1.25rem, 6vw, 6rem);
+        background: #eef2f7;
+      }
+
+      body:not(.on-home) .auth-card {
+        width: min(100%, 28rem);
+        padding: clamp(1.5rem, 3vw, 2.5rem);
+        border: 1px solid #dbe3ed;
+        border-radius: 18px;
+        background: #ffffff;
+        box-shadow: 0 18px 45px rgba(15, 23, 42, 0.1);
+      }
+
+      body:not(.on-home) .tabs {
+        margin-bottom: 1.75rem;
+      }
+
+      body:not(.on-home) .auth h2 {
+        font-size: clamp(1.55rem, 1.2rem + 0.9vw, 2rem);
+      }
+
+      @media (max-width: 899px) {
+        body:not(.on-home) .brand {
+          min-height: 36vh;
+          padding: 3rem var(--pad-x) 2.5rem;
+        }
+
+        body:not(.on-home) .brand h1 {
+          font-size: clamp(2.8rem, 12vw, 4.5rem);
+        }
+
+        body:not(.on-home) .auth {
+          align-items: flex-start;
+          padding: 2.75rem var(--pad-x) 3rem;
+        }
+
+        body:not(.on-home) .auth-card {
+          margin-top: 0;
+        }
+      }
     </style>
   </head>
   <body class="booting">
     <div class="split">
       <section class="brand" aria-label="Personal Finance">
         <div class="brand-inner">
-          <p class="eyebrow">Personal Finance</p>
-          <h1>Money,<br />made clear.</h1>
+          <h1>Personal Finance</h1>
           <p class="lede">
             Track your income, expenses, and investments in one private ledger.
           </p>
-          <ul class="features">
-            <li>
-              <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
-                <circle cx="11" cy="11" r="11" fill="rgba(94,234,212,0.18)" />
-                <path
-                  d="M6.5 11.2l3 3.1 6-6.4"
-                  stroke="#5eead4"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-              ₹ INR-only records
-            </li>
-            <li>
-              <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
-                <circle cx="11" cy="11" r="11" fill="rgba(94,234,212,0.18)" />
-                <path
-                  d="M6.5 11.2l3 3.1 6-6.4"
-                  stroke="#5eead4"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-              Private to your account
-            </li>
-            <li>
-              <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
-                <circle cx="11" cy="11" r="11" fill="rgba(94,234,212,0.18)" />
-                <path
-                  d="M6.5 11.2l3 3.1 6-6.4"
-                  stroke="#5eead4"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-              Designed for every screen
-            </li>
-          </ul>
         </div>
       </section>
 
@@ -1861,6 +2454,18 @@
 
     <main class="home" id="home">
       <header class="home-topbar">
+        <button
+          type="button"
+          id="home-menu-toggle"
+          class="home-menu-toggle"
+          aria-label="Open menu"
+          aria-expanded="false"
+          aria-controls="home-menu"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round" />
+          </svg>
+        </button>
         <h1>Personal Finance</h1>
         <div class="home-user-wrap">
           <span id="home-user-name" class="home-user-name"></span>
@@ -1868,6 +2473,9 @@
             <span class="home-remaining-label">Available Balance:</span>
             <span id="home-remaining-amount" class="home-remaining-amount zero">₹0</span>
           </p>
+        </div>
+        <div id="home-menu" class="home-menu" hidden>
+          <p class="home-menu-label">Account</p>
           <button type="button" id="home-sign-out-btn" class="home-sign-out-btn">Sign out</button>
         </div>
       </header>
@@ -2096,7 +2704,6 @@
                 </div>
                 <button type="button" class="history-filter-clear" id="expense-filter-clear">Clear</button>
               </div>
-              <p id="expense-filter-status" class="history-filter-status">Showing all time</p>
             </div>
           </div>
           <div class="history-tabs" role="tablist" aria-label="Transaction history type">
@@ -2201,6 +2808,8 @@
       const homeUserName = document.getElementById("home-user-name");
       const homeRemaining = document.getElementById("home-remaining");
       const homeRemainingAmount = document.getElementById("home-remaining-amount");
+      const homeMenuToggle = document.getElementById("home-menu-toggle");
+      const homeMenu = document.getElementById("home-menu");
       const homeSignOutBtn = document.getElementById("home-sign-out-btn");
       const homeTotalIncome = document.getElementById("home-total-income");
       const expenseFilterFrom = document.getElementById("expense-filter-from");
@@ -2932,6 +3541,7 @@
       }
 
       function updateTransactionDateFilterStatus() {
+        if (!expenseFilterStatus) return;
         if (!transactionDateFilter.from && !transactionDateFilter.to) {
           expenseFilterStatus.textContent = "Showing all time";
           return;
@@ -3821,6 +4431,20 @@
       homeSignOutBtn.addEventListener("click", signOutUser);
       document.getElementById("sign-out-btn").addEventListener("click", signOutUser);
 
+      function setHomeMenuOpen(open) {
+        homeMenu.hidden = !open;
+        homeMenuToggle.setAttribute("aria-expanded", String(open));
+        homeMenuToggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+      }
+
+      homeMenuToggle.addEventListener("click", () => {
+        setHomeMenuOpen(homeMenu.hidden);
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && !homeMenu.hidden) setHomeMenuOpen(false);
+      });
+
       expenseForm.addEventListener("submit", async (event) => {
         event.preventDefault();
         if (expenseFormLock.busy) return;
@@ -4025,6 +4649,7 @@
       });
       document.addEventListener("click", (event) => {
         if (!event.target.closest(".dob-field")) closeDobCalendar();
+        if (!event.target.closest(".home-menu, .home-menu-toggle")) setHomeMenuOpen(false);
       });
 
       form.addEventListener("submit", async (event) => {
