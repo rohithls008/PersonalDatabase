@@ -519,10 +519,11 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 0.25rem;
-        padding: max(0.34rem, calc(env(safe-area-inset-top) + 0.21rem)) var(--pad-x)
-          max(0.28rem, 0.5vh);
-        padding-right: calc(var(--pad-x) + 4.75rem);
+        gap: 0.5rem;
+        min-height: clamp(4.5rem, 10vh, 6rem);
+        padding: max(0.68rem, calc(env(safe-area-inset-top) + 0.42rem)) var(--pad-x)
+          max(0.56rem, 1vh);
+        padding-right: calc(var(--pad-x) + 5.5rem);
         color: #fff;
         background: var(--brand-gradient);
         box-shadow: var(--shadow-md);
@@ -530,7 +531,7 @@
 
       .home-topbar h1 {
         margin: 0;
-        font-size: clamp(0.85rem, 0.75rem + 0.45vw, 1.15rem);
+        font-size: clamp(1.7rem, 1.5rem + 0.9vw, 2.3rem);
         font-weight: 800;
         letter-spacing: 0.05em;
         text-transform: uppercase;
@@ -541,30 +542,30 @@
 
       .home-user-wrap {
         position: absolute;
-        right: calc(var(--pad-x) + 4.75rem);
+        right: calc(var(--pad-x) + 5.5rem);
         top: 50%;
         transform: translateY(-50%);
         display: flex;
         flex-direction: column;
         align-items: flex-end;
-        gap: 0.05rem;
+        gap: 0.1rem;
         text-align: right;
       }
 
       .home-user-name {
-        font-size: clamp(0.72rem, 0.68rem + 0.12vw, 0.82rem);
+        font-size: clamp(1rem, 0.94rem + 0.2vw, 1.15rem);
         font-weight: 600;
         color: rgba(255, 255, 255, 0.94);
         white-space: nowrap;
-        line-height: 1.1;
+        line-height: 1.15;
       }
 
       .home-remaining {
-        font-size: clamp(0.65rem, 0.62rem + 0.08vw, 0.72rem);
+        font-size: clamp(0.9rem, 0.86rem + 0.12vw, 1rem);
         font-weight: 700;
         white-space: nowrap;
         color: #fff;
-        line-height: 1.1;
+        line-height: 1.15;
       }
 
       .home-remaining-label {
@@ -593,17 +594,17 @@
 
       .home-sign-out-btn {
         position: absolute;
-        top: max(0.34rem, calc(env(safe-area-inset-top) + 0.21rem));
+        top: max(0.68rem, calc(env(safe-area-inset-top) + 0.42rem));
         right: var(--pad-x);
         z-index: 1;
         margin: 0;
-        padding: 0.15rem 0.45rem;
+        padding: 0.3rem 0.9rem;
         border: 1px solid rgba(255, 255, 255, 0.35);
-        border-radius: 6px;
+        border-radius: 8px;
         background: rgba(255, 255, 255, 0.1);
         color: rgba(255, 255, 255, 0.95);
         font: inherit;
-        font-size: 0.65rem;
+        font-size: 0.78rem;
         font-weight: 700;
         line-height: 1.2;
         cursor: pointer;
