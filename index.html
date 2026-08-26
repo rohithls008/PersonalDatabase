@@ -46,7 +46,7 @@
         --chart-frame-size: 390px;
         --chart-size: calc(var(--chart-frame-size) * 0.8);
         --chart-box-padding: clamp(1.275rem, 3vw, 1.725rem);
-        --home-topbar-height: 8.25rem;
+        --home-topbar-height: auto;
         --surface: #ffffff;
         --surface-muted: #f8fafc;
         --surface-soft: #f1f5f9;
@@ -514,17 +514,15 @@
       }
 
       .home-topbar {
-        position: fixed;
+        position: sticky;
         top: 0;
-        left: 0;
-        right: 0;
         z-index: 20;
         display: grid;
         grid-template-columns: 1fr auto 1fr;
         align-items: center;
         gap: 1rem;
-        min-height: var(--home-topbar-height);
-        padding: max(2.7rem, calc(env(safe-area-inset-top) + 1.35rem)) var(--pad-x) 2.7rem;
+        padding: max(1.35rem, calc(env(safe-area-inset-top) + 0.85rem)) var(--pad-x)
+          clamp(1.1rem, 2vh, 1.35rem);
         color: #fff;
         background: var(--brand-gradient);
         box-shadow: var(--shadow-md);
@@ -614,8 +612,7 @@
       }
 
       .home-body {
-        padding: calc(var(--home-topbar-height) + clamp(0.75rem, 1.5vh, 1rem)) var(--pad-x)
-          clamp(1.25rem, 3vh, 2rem);
+        padding: clamp(1rem, 2vh, 1.5rem) var(--pad-x) clamp(1.25rem, 3vh, 2rem);
       }
 
       .home-dashboard {
