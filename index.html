@@ -2563,22 +2563,36 @@
           <h2 id="auth-title">Welcome back</h2>
           <p class="hint" id="auth-hint">Use your email and password to continue.</p>
           <form id="auth-form" novalidate>
-            <label>
-              <span class="field-name">Email</span>
+            <!-- LOGIN FIELDS -->
+            <label class="login-only" id="login-email-label">
+              <span class="field-name">Email*</span>
               <input
-                name="email"
+                name="login_email"
                 type="email"
                 inputmode="email"
                 autocomplete="email"
                 required
                 maxlength="254"
                 placeholder="you@example.com"
-                title="Use your email address as your user id"
               />
             </label>
-            <label class="login-only">
-              <span class="field-name">Password</span>
+            <label class="login-only" id="login-password-label">
+              <span class="field-name">Password*</span>
               <input name="login_password" type="password" autocomplete="current-password" minlength="6" required />
+            </label>
+
+            <!-- SIGNUP FIELDS -->
+            <label id="email-label" class="confirm-only">
+              <span class="field-name">Email*</span>
+              <input
+                name="email"
+                type="email"
+                inputmode="email"
+                autocomplete="email"
+                maxlength="254"
+                placeholder="you@example.com"
+                required
+              />
             </label>
             <div class="confirm-only name-row">
               <label>
@@ -2590,7 +2604,7 @@
                 <input name="last_name" autocomplete="family-name" maxlength="80" required />
               </label>
             </div>
-            <div class="confirm-only password-row">
+            <div class="confirm-only password-row" hidden>
               <label>
                 <span class="field-name">Password</span>
                 <input name="signup_password" type="password" autocomplete="new-password" minlength="6" required disabled />
@@ -2995,7 +3009,7 @@
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVqbHJsYWpyY25xdG9mcmhxenB2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc1Mzg2MzMsImV4cCI6MjEwMzExNDYzM30.rYrs6LZhfzlZacLvmn4fRPfOhEQhlfu_6jd5j5fXbuM";
       const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       const PROFILE_USER_NAME_RE = /^[A-Za-z0-9._-]{3,32}$/;
-      const INVALID_LOGIN = "Invalid User Credentials";
+      const INVALID_LOGIN = "Invalid email or password";
 
       const title = document.getElementById("auth-title");
       const hint = document.getElementById("auth-hint");
@@ -3022,6 +3036,7 @@
       const signupTab = document.getElementById("tab-signup");
       const confirm = document.querySelector('input[name="confirm"]');
       const confirmWarning = document.getElementById("confirm-warning");
+      const loginEmail = document.querySelector('input[name="login_email"]');
       const loginPassword = document.querySelector('input[name="login_password"]');
       const signupPassword = document.querySelector('input[name="signup_password"]');
       const emailInput = document.querySelector('input[name="email"]');
@@ -3078,6 +3093,7 @@
       const investmentFormStatus = document.getElementById("investment-form-status");
       let toastTimer = 0;
       let currentUser = null;
+      let pendingPhoneAuth = null; // Store phone+session while waiting for OTP verification
       let lastExpenseChart = { slices: [], total: 0 };
       let lastInvestmentChart = { slices: [], total: 0 };
       let lastExpenseRows = [];
@@ -3365,23 +3381,18 @@
         emailInput.classList.remove("invalid");
         firstNameInput.classList.remove("invalid");
         lastNameInput.classList.remove("invalid");
-        signupPassword.classList.remove("invalid");
-        confirm.classList.remove("invalid");
         dobToggle.classList.remove("invalid");
-        showPasswordMismatch(false);
       }
 
       function validateSignupForm() {
         clearSignupFieldErrors();
-        const email = normalizeEmail(emailInput.value);
+        const email = emailInput.value.trim();
         const firstName = firstNameInput.value.trim();
         const lastName = lastNameInput.value.trim();
-        const password = signupPassword.value;
-        const confirmValue = confirm.value;
 
         if (!email) {
           emailInput.classList.add("invalid");
-          return "Enter your email (user id).";
+          return "Enter your email address.";
         }
         if (!EMAIL_RE.test(email)) {
           emailInput.classList.add("invalid");
@@ -3394,22 +3405,6 @@
         if (!lastName) {
           lastNameInput.classList.add("invalid");
           return "Enter your last name.";
-        }
-        if (!password) {
-          signupPassword.classList.add("invalid");
-          return "Enter a password.";
-        }
-        if (password.length < 6) {
-          signupPassword.classList.add("invalid");
-          return "Password must be at least 6 characters.";
-        }
-        if (!confirmValue) {
-          confirm.classList.add("invalid");
-          return "Confirm your password.";
-        }
-        if (password !== confirmValue) {
-          showPasswordMismatch(true);
-          return "";
         }
         setDobLimits();
         const dob = dobInput.value;
@@ -3460,48 +3455,63 @@
         document.body.classList.toggle("signup", signup);
         loginTab.setAttribute("aria-selected", String(!signup));
         signupTab.setAttribute("aria-selected", String(signup));
-        title.textContent = signup ? "Create your account" : "Welcome back";
-        hint.textContent = signup
-          ? "Required fields marked with *. Email is your user id. Must be 18+. A confirmation email will be sent."
-          : "Use your email and password to continue.";
-        submit.textContent = signup ? "Sign up" : "Log in";
-        emailInput.required = true;
-        loginPassword.required = !signup;
-        signupPassword.required = signup;
-        confirm.required = signup;
-        firstNameInput.required = signup;
-        lastNameInput.required = signup;
-        dobInput.required = signup;
-        loginPassword.disabled = true;
-        signupPassword.disabled = true;
-        confirm.disabled = true;
-        loginPassword.value = "";
-        signupPassword.value = "";
-        confirm.value = "";
-        loginPassword.disabled = signup;
-        signupPassword.disabled = !signup;
-        confirm.disabled = !signup;
+        
+        if (signup) {
+          title.textContent = "Create your account";
+          hint.textContent = "Sign up with your email to get started.";
+          submit.textContent = "Sign up";
+          emailInput.required = true;
+          firstNameInput.required = true;
+          lastNameInput.required = true;
+          dobInput.required = true;
+          loginEmail.required = false;
+          loginPassword.required = false;
+        } else {
+          title.textContent = "Welcome back";
+          hint.textContent = "Use your email and password to continue.";
+          submit.textContent = "Log in";
+          emailInput.required = false;
+          firstNameInput.required = false;
+          lastNameInput.required = false;
+          dobInput.required = false;
+          loginEmail.required = true;
+          loginPassword.required = true;
+        }
+        
+        // Clear all inputs
+        emailInput.value = "";
         firstNameInput.value = "";
         lastNameInput.value = "";
         dobInput.value = "";
+        loginEmail.value = "";
+        loginPassword.value = "";
         dobInput.setCustomValidity("");
-        loginPassword.classList.remove("invalid");
-        signupPassword.classList.remove("invalid");
-        confirm.classList.remove("invalid");
+        
+        // Clear error states
         emailInput.classList.remove("invalid");
         firstNameInput.classList.remove("invalid");
         lastNameInput.classList.remove("invalid");
         dobToggle.classList.remove("invalid");
+        loginEmail.classList.remove("invalid");
+        loginPassword.classList.remove("invalid");
+        
+        // Clear status messages
         loginStatus.textContent = "";
         signupStatus.textContent = "";
         loginStatus.classList.remove("ok", "bad");
         signupStatus.classList.remove("ok", "bad");
+        
         showPasswordMismatch(false);
         closeDobCalendar();
+        
+        document.getElementById("email-label").hidden = !signup;
+        document.getElementById("login-email-label").hidden = signup;
+        document.getElementById("login-password-label").hidden = signup;
+        
+        submit.hidden = false;
+        
         if (signup) {
           setDobLimits();
-          syncDobToggle();
-        } else {
           syncDobToggle();
         }
       }
@@ -4887,103 +4897,127 @@
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
         const signup = document.body.classList.contains("signup");
-        const email = normalizeEmail(emailInput.value);
 
+        if (!supabase) {
+          setStatus("Auth service did not load. Refresh the page.", "bad");
+          return;
+        }
+
+        // ===== LOGIN FLOW (Email + Password) =====
         if (!signup) {
-          if (!email || !EMAIL_RE.test(email) || !loginPassword.value) {
-            emailInput.classList.toggle("invalid", !email || !EMAIL_RE.test(email));
-            loginPassword.classList.toggle("invalid", !loginPassword.value);
-            setStatus(INVALID_LOGIN, "bad");
+          const email = loginEmail.value.trim();
+          const password = loginPassword.value;
+
+          if (!email || !EMAIL_RE.test(email)) {
+            loginEmail.classList.add("invalid");
+            setStatus("Enter a valid email address", "bad");
             return;
           }
-          if (!supabase) {
-            setStatus("Login service did not load. Refresh the page.", "bad");
+          if (!password || password.length < 6) {
+            loginPassword.classList.add("invalid");
+            setStatus("Enter your password", "bad");
             return;
           }
+
+          loginEmail.classList.remove("invalid");
+          loginPassword.classList.remove("invalid");
           submit.disabled = true;
           setStatus("");
+
           try {
             const { data, error } = await supabase.auth.signInWithPassword({
               email,
-              password: loginPassword.value,
+              password,
             });
-            if (error || !data.session) {
-              setStatus(INVALID_LOGIN, "bad");
-              return;
+
+            if (error) throw error;
+            if (!data.session) {
+              throw new Error("Login failed");
             }
+
             try {
               await ensureProfileForUser(data.user);
             } catch (_ignore) {
-              /* showSession will retry profile setup */
+              /* showSession will retry */
             }
             await finishAuthSuccess(data.session, "Login successful");
-          } catch (_err) {
-            setStatus(INVALID_LOGIN, "bad");
+          } catch (err) {
+            setStatus("Invalid email or password", "bad");
           } finally {
             submit.disabled = false;
           }
           return;
         }
+
+        // ===== SIGNUP FLOW (Email Verification) =====
         const signupError = validateSignupForm();
         if (signupError === "") return;
         if (signupError) {
           setStatus(signupError, "bad");
           return;
         }
+
+        const email = emailInput.value.trim();
+        const password = signupPassword.value;
         const firstName = firstNameInput.value.trim();
         const lastName = lastNameInput.value.trim();
         const dob = dobInput.value;
+        const profileUserName = normalizeProfileUserName(email);
 
         submit.disabled = true;
         setStatus("");
 
         try {
-          if (signup) {
-            const profileUserName = normalizeProfileUserName(email);
-            const { data: taken, error: takenError } = await supabase.rpc("user_id_taken", {
-              p_user_name: profileUserName,
-            });
-            if (!takenError && taken) {
-              throw new Error("User id already exists");
-            }
-            const { data, error } = await supabase.auth.signUp({
-              email,
-              password: signupPassword.value,
-              options: {
-                data: {
-                  user_name: profileUserName,
-                  first_name: firstName,
-                  last_name: lastName,
-                  date_of_birth: dob,
-                },
+          // Check if user_id is already taken
+          const { data: taken, error: takenError } = await supabase.rpc("user_id_taken", {
+            p_user_name: profileUserName,
+          });
+          if (!takenError && taken) {
+            throw new Error("User id already exists");
+          }
+
+          // Sign up with email
+          const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+              data: {
+                user_name: profileUserName,
+                first_name: firstName,
+                last_name: lastName,
+                date_of_birth: dob,
               },
-            });
-            if (error) throw error;
-            if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
-              throw new Error("User id already exists");
+            },
+          });
+
+          if (error) throw error;
+          if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+            throw new Error("User id already exists");
+          }
+
+          if (data.user && data.session) {
+            // Email confirmation not required
+            const session = data.session;
+            try {
+              await ensureProfileForUser(session.user, {
+                userName: profileUserName,
+                firstName,
+                lastName,
+                dateOfBirth: dob,
+              });
+            } catch (_ignore) {
+              /* showSession will retry */
             }
-            if (data.user && data.session) {
-              const session = data.session;
-              try {
-                await ensureProfileForUser(session.user, {
-                  userName: profileUserName,
-                  firstName,
-                  lastName,
-                  dateOfBirth: dob,
-                });
-              } catch (_ignore) {
-                /* showSession will retry profile setup */
-              }
-              await finishAuthSuccess(session, "Sign up successful");
-            } else if (data.user) {
-              clearAuthWarnings();
-              setStatus("Check your email and click the confirmation link before logging in.", "good");
-            } else {
-              throw new Error("Sign up did not create an account.");
-            }
+            await finishAuthSuccess(session, "Sign up successful");
+          } else if (data.user) {
+            // Email confirmation required
+            clearAuthWarnings();
+            setStatus("Check your email and click the confirmation link before logging in.", "good");
+          } else {
+            throw new Error("Sign up did not create an account.");
           }
         } catch (err) {
-          setStatus(authErrorMessage(err, signup), "bad");
+          setStatus(authErrorMessage(err, true), "bad");
         } finally {
           submit.disabled = false;
         }

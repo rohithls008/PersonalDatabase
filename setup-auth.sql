@@ -1,6 +1,7 @@
 -- Run this in Supabase → SQL Editor (once).
--- Maps Auth users to public.user_profiles.
--- Password stays in Auth. user_id = auth.users.id. user_name comes from the app.
+-- Maps Auth users (phone OTP) to public.user_profiles.
+-- Phone number stays in Auth. user_id = auth.users.id. user_name comes from the app.
+-- Enable Phone Provider in Supabase Dashboard: Authentication → Providers → Phone
 
 create unique index if not exists user_profiles_user_id_key
   on public.user_profiles (user_id);
@@ -15,12 +16,12 @@ security definer
 set search_path = public
 as $$
 begin
-  insert into public.user_profiles (user_id, user_name, first_name, last_name, date_of_birth)
+  insert into public.user_profiles (user_id, user_name, first_name, last_name, email, date_of_birth)
   values (
     new.id,
     left(
       regexp_replace(
-        lower(split_part(coalesce(nullif(new.raw_user_meta_data->>'user_name', ''), new.email), '@', 1)),
+        lower(coalesce(nullif(new.raw_user_meta_data->>'user_name', ''), 'user_' || substr(new.id::text, 1, 8))),
         '[^a-z0-9._-]',
         '_',
         'g'
@@ -29,12 +30,14 @@ begin
     ),
     nullif(new.raw_user_meta_data->>'first_name', ''),
     nullif(new.raw_user_meta_data->>'last_name', ''),
+    nullif(new.raw_user_meta_data->>'email', ''),
     nullif(new.raw_user_meta_data->>'date_of_birth', '')::date
   )
   on conflict (user_id) do update
     set user_name = excluded.user_name,
         first_name = coalesce(excluded.first_name, public.user_profiles.first_name),
         last_name = coalesce(excluded.last_name, public.user_profiles.last_name),
+        email = coalesce(excluded.email, public.user_profiles.email),
         date_of_birth = coalesce(excluded.date_of_birth, public.user_profiles.date_of_birth),
         updated_at = now();
   return new;
@@ -46,9 +49,9 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
 
--- In Supabase Dashboard, enable Authentication -> Providers -> Email -> Confirm email.
--- The app sends Supabase's confirmation email and blocks unconfirmed users from the dashboard.
-drop trigger if exists on_auth_user_auto_confirm on auth.users;
+-- Phone authentication is configured in Supabase Dashboard:
+-- Authentication → Providers → Phone → Enable
+-- OTP will be sent via SMS automatically
 
 alter table public.user_profiles enable row level security;
 
