@@ -44,7 +44,7 @@
           #6366f1 100%
         );
         --chart-frame-size: 390px;
-        --chart-size: calc(var(--chart-frame-size) * 0.8);
+        --chart-size: calc(var(--chart-frame-size) * 0.88);
         --chart-box-padding: clamp(1.275rem, 3vw, 1.725rem);
         --surface: #ffffff;
         --surface-muted: #f8fafc;
@@ -1034,7 +1034,8 @@
       }
 
       .entry-tabs,
-      .history-tabs {
+      .history-tabs,
+      .dashboard-tabs {
         display: flex;
         flex-wrap: wrap;
         gap: 0.35rem;
@@ -1047,7 +1048,8 @@
       }
 
       .entry-tabs button,
-      .history-tabs button {
+      .history-tabs button,
+      .dashboard-tabs button {
         appearance: none;
         background: transparent;
         border: 0;
@@ -1066,21 +1068,45 @@
       }
 
       .entry-tabs button:hover,
-      .history-tabs button:hover {
+      .history-tabs button:hover,
+      .dashboard-tabs button:hover {
         color: #4338ca;
         background: rgba(255, 255, 255, 0.72);
       }
 
       .entry-tabs button[aria-selected="true"],
-      .history-tabs button[aria-selected="true"] {
+      .history-tabs button[aria-selected="true"],
+      .dashboard-tabs button[aria-selected="true"] {
         color: #312e81;
         background: var(--surface);
         box-shadow: var(--shadow-xs);
       }
 
       .entry-panel form[hidden],
-      .entry-section[hidden] {
+      .entry-section[hidden],
+      .dashboard-panel[hidden] {
         display: none;
+      }
+
+      .dashboard-tabs {
+        margin: 0 0 clamp(1.25rem, 2.5vw, 2rem);
+        max-width: none;
+      }
+
+      .dashboard-tabs button {
+        min-height: 2.8rem;
+        min-width: 0;
+        font-weight: 800;
+        flex: 1 1 0;
+      }
+
+      .home-dashboard {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .dashboard-panel {
+        width: 70%;
+        justify-self: center;
       }
 
       .entry-section,
@@ -1999,6 +2025,26 @@
         .home-remaining {
           font-size: clamp(0.7rem, 1.5vw, 0.84rem);
         }
+
+        .history-date-filter-toolbar {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) auto;
+          justify-content: initial;
+        }
+
+        .history-date-filter-heading {
+          grid-column: 1 / -1;
+        }
+
+        .history-date-fields {
+          grid-column: 1 / -1;
+          width: 100%;
+        }
+
+        .history-filter-clear {
+          grid-column: 1 / -1;
+          justify-self: end;
+        }
       }
 
       @media (max-width: 720px) {
@@ -2060,11 +2106,23 @@
         }
 
         .history-date-filter-toolbar {
-          justify-content: stretch;
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) auto;
+          justify-content: initial;
+        }
+
+        .history-date-filter-heading {
+          grid-column: 1 / -1;
         }
 
         .history-date-fields {
+          grid-column: 1 / -1;
           width: 100%;
+        }
+
+        .history-filter-clear {
+          grid-column: 1 / -1;
+          justify-self: end;
         }
       }
 
@@ -2125,7 +2183,7 @@
 
       .chart-placeholder {
         --chart-frame-size: clamp(220px, 25vw, 300px);
-        --chart-size: calc(var(--chart-frame-size) * 0.8);
+        --chart-size: calc(var(--chart-frame-size) * 0.88);
         border-radius: 12px;
         background: linear-gradient(145deg, #f8fafc 0%, #eef3f8 100%);
       }
@@ -2297,6 +2355,32 @@
         }
       }
 
+      @media (max-width: 900px) {
+        .dashboard-panel {
+          width: 100%;
+        }
+
+        .history-date-filter-toolbar {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) auto;
+          justify-content: initial;
+        }
+
+        .history-date-filter-heading,
+        .history-date-fields,
+        .history-filter-clear {
+          grid-column: 1 / -1;
+        }
+
+        .history-date-fields {
+          width: 100%;
+        }
+
+        .history-filter-clear {
+          justify-self: end;
+        }
+      }
+
       .chart-legend {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2347,6 +2431,18 @@
       @media (min-width: 721px) {
         .chart-placeholder {
           --chart-frame-size: clamp(230px, 22vw, 280px);
+        }
+
+        .chart-wrap {
+          grid-template-columns: minmax(0, 1fr) var(--chart-frame-size) minmax(0, 1fr);
+        }
+
+        .chart-panel {
+          grid-column: 2;
+        }
+
+        .chart-legend {
+          grid-column: 3;
         }
       }
 
@@ -2574,8 +2670,16 @@
         </div>
       </header>
       <div class="home-body">
+        <div class="dashboard-tabs" role="tablist" aria-label="Finance sections">
+          <button type="button" id="tab-dashboard-expense" role="tab" aria-selected="true" aria-controls="dashboard-expense-panel">
+            Expense/Income
+          </button>
+          <button type="button" id="tab-dashboard-investment" role="tab" aria-selected="false" aria-controls="dashboard-investment-panel">
+            Investments
+          </button>
+        </div>
         <div class="home-dashboard">
-          <section class="chart-block chart-block--expenses" aria-labelledby="expense-chart-title">
+          <section id="dashboard-expense-panel" class="chart-block chart-block--expenses dashboard-panel" role="tabpanel" aria-labelledby="tab-dashboard-expense">
             <h2 id="expense-chart-title" class="chart-title">Expenses</h2>
             <div class="chart-placeholder">
               <div class="chart-wrap">
@@ -2693,7 +2797,7 @@
             </div>
           </section>
 
-          <section class="chart-block chart-block--investments" aria-labelledby="investment-chart-title">
+          <section id="dashboard-investment-panel" class="chart-block chart-block--investments dashboard-panel" role="tabpanel" aria-labelledby="tab-dashboard-investment" hidden>
             <h2 id="investment-chart-title" class="chart-title">Investments</h2>
             <div class="chart-placeholder">
               <div class="chart-wrap">
@@ -2906,6 +3010,10 @@
       const homeMenu = document.getElementById("home-menu");
       const homeSignOutBtn = document.getElementById("home-sign-out-btn");
       const homeTotalIncome = document.getElementById("home-total-income");
+      const dashboardExpenseTab = document.getElementById("tab-dashboard-expense");
+      const dashboardInvestmentTab = document.getElementById("tab-dashboard-investment");
+      const dashboardExpensePanel = document.getElementById("dashboard-expense-panel");
+      const dashboardInvestmentPanel = document.getElementById("dashboard-investment-panel");
       const expenseFilterFrom = document.getElementById("expense-filter-from");
       const expenseFilterTo = document.getElementById("expense-filter-to");
       const expenseFilterClear = document.getElementById("expense-filter-clear");
@@ -2977,6 +3085,7 @@
       let lastInvestmentRows = [];
       let editingHistoryId = null;
       let pendingHistoryDelete = null;
+      let activeDashboardTab = "expense";
       let activeHistoryTab = "expense";
       const HISTORY_PAGE_SIZE = 15;
       const historyPages = { expense: 1, income: 1, investment: 1 };
@@ -4504,6 +4613,15 @@
         renderHistoryPagination();
       }
 
+      function setDashboardTab(tab) {
+        activeDashboardTab = tab;
+        const isInvestment = tab === "investment";
+        dashboardExpenseTab.setAttribute("aria-selected", String(!isInvestment));
+        dashboardInvestmentTab.setAttribute("aria-selected", String(isInvestment));
+        dashboardExpensePanel.hidden = isInvestment;
+        dashboardInvestmentPanel.hidden = !isInvestment;
+      }
+
       function setEntryTab(income) {
         entryExpenseTab.setAttribute("aria-selected", String(!income));
         entryIncomeTab.setAttribute("aria-selected", String(income));
@@ -4515,6 +4633,9 @@
 
       entryExpenseTab.addEventListener("click", () => setEntryTab(false));
       entryIncomeTab.addEventListener("click", () => setEntryTab(true));
+
+      dashboardExpenseTab.addEventListener("click", () => setDashboardTab("expense"));
+      dashboardInvestmentTab.addEventListener("click", () => setDashboardTab("investment"));
 
       historyExpenseTab.addEventListener("click", () => setHistoryTab("expense"));
       historyIncomeTab.addEventListener("click", () => setHistoryTab("income"));
