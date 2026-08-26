@@ -1656,7 +1656,10 @@
 
       @media (max-width: 899px) {
         body.signup .brand {
-          display: none;
+          display: flex;
+          min-height: 30vh;
+          padding-top: 2.5rem;
+          padding-bottom: 2rem;
         }
 
         body.signup .split {
@@ -1666,13 +1669,13 @@
         body.signup .auth {
           min-height: 100dvh;
           align-items: flex-start;
-          padding: max(0.85rem, env(safe-area-inset-top)) var(--pad-x)
-            max(0.85rem, env(safe-area-inset-bottom));
+          padding: 2rem var(--pad-x) max(2rem, env(safe-area-inset-bottom));
           overflow-y: auto;
         }
 
         body.signup .auth-card {
           width: min(100%, 24rem);
+          margin-top: 0;
         }
       }
 
