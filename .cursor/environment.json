@@ -1,0 +1,11 @@
+{
+  "name": "PersonalDatabase",
+  "install": "echo 'Static HTML app — no dependencies to install'",
+  "terminals": [
+    {
+      "name": "dev-server",
+      "command": "python3 -m http.server 5173 --bind 0.0.0.0"
+    }
+  ],
+  "ports": [5173]
+}
