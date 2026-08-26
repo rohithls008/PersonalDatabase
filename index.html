@@ -3493,7 +3493,6 @@
       const historyDeleteLock = { busy: false };
 
       async function ensureCurrentUserForWrite() {
-        if (currentUser?.id) return currentUser;
         if (!supabase) throw new Error("Database not connected.");
         const { data, error } = await withTimeout(
           supabase.auth.getUser(),
@@ -3507,7 +3506,7 @@
         await withTimeout(
           ensureProfileForUser(user),
           REQUEST_TIMEOUT_MS,
-          "Profile setup timed out. Try again."
+          "Profile setup timed out. Try again before saving an entry."
         );
         currentUser = await withTimeout(
           resolveCurrentUser(user),

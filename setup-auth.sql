@@ -1,10 +1,12 @@
 -- Run this in Supabase → SQL Editor (once).
--- Maps Auth users (email) to public.user_profiles.
+-- Maps Auth users to public.user_profiles.
 -- Email stays in Auth. user_id = auth.users.id. user_name and dob come from the app.
 -- Enable Email Provider in Supabase Dashboard: Authentication → Providers → Email
 
--- Ensure date_of_birth column is NOT NULL (required)
-alter table public.user_profiles alter column date_of_birth set not null;
+-- Existing accounts may not have date_of_birth in Auth metadata. Keep the
+-- profile repair path usable for those accounts; new signups still require it
+-- in the app form.
+alter table public.user_profiles alter column date_of_birth drop not null;
 
 create unique index if not exists user_profiles_user_id_key
   on public.user_profiles (user_id);
@@ -19,7 +21,7 @@ security definer
 set search_path = public
 as $$
 begin
-  insert into public.user_profiles (user_id, user_name, first_name, last_name, email, date_of_birth)
+  insert into public.user_profiles (user_id, user_name, first_name, last_name, date_of_birth)
   values (
     new.id,
     left(
@@ -33,14 +35,12 @@ begin
     ),
     nullif(new.raw_user_meta_data->>'first_name', ''),
     nullif(new.raw_user_meta_data->>'last_name', ''),
-    nullif(new.raw_user_meta_data->>'email', ''),
     nullif(new.raw_user_meta_data->>'date_of_birth', '')::date
   )
   on conflict (user_id) do update
     set user_name = excluded.user_name,
         first_name = coalesce(excluded.first_name, public.user_profiles.first_name),
         last_name = coalesce(excluded.last_name, public.user_profiles.last_name),
-        email = coalesce(excluded.email, public.user_profiles.email),
         date_of_birth = coalesce(excluded.date_of_birth, public.user_profiles.date_of_birth),
         updated_at = now();
   return new;
