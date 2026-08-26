@@ -2604,6 +2604,12 @@
                 <input name="last_name" autocomplete="family-name" maxlength="80" required />
               </label>
             </div>
+            <div class="confirm-only">
+              <label>
+                <span class="field-name">Date of birth<span style="color: #dc2626;">*</span></span>
+                <input name="dob" type="date" required />
+              </label>
+            </div>
             <div class="confirm-only password-row" hidden>
               <label>
                 <span class="field-name">Password<span style="color: #dc2626;">*</span></span>
@@ -3018,6 +3024,7 @@
       const emailInput = document.querySelector('input[name="email"]');
       const firstNameInput = document.querySelector('input[name="first_name"]');
       const lastNameInput = document.querySelector('input[name="last_name"]');
+      const dobInput = document.querySelector('input[name="dob"]');
       const sessionName = document.getElementById("session-name");
       const sessionId = document.getElementById("session-id");
       const toast = document.getElementById("toast");
@@ -3235,6 +3242,7 @@
         emailInput.classList.remove("invalid");
         firstNameInput.classList.remove("invalid");
         lastNameInput.classList.remove("invalid");
+        dobInput.classList.remove("invalid");
         signupPassword.classList.remove("invalid");
         confirm.classList.remove("invalid");
       }
@@ -3244,6 +3252,7 @@
         const email = emailInput.value.trim();
         const firstName = firstNameInput.value.trim();
         const lastName = lastNameInput.value.trim();
+        const dob = dobInput.value.trim();
 
         if (!email) {
           emailInput.classList.add("invalid");
@@ -3260,6 +3269,10 @@
         if (!lastName) {
           lastNameInput.classList.add("invalid");
           return "Enter your last name.";
+        }
+        if (!dob) {
+          dobInput.classList.add("invalid");
+          return "Enter your date of birth.";
         }
         return null;
       }
@@ -3308,6 +3321,7 @@
           emailInput.required = true;
           firstNameInput.required = true;
           lastNameInput.required = true;
+          dobInput.required = true;
           signupPassword.required = true;
           confirm.required = true;
           loginEmail.required = false;
@@ -3319,6 +3333,7 @@
           emailInput.required = false;
           firstNameInput.required = false;
           lastNameInput.required = false;
+          dobInput.required = false;
           signupPassword.required = false;
           confirm.required = false;
           loginEmail.required = true;
@@ -3329,6 +3344,7 @@
         emailInput.value = "";
         firstNameInput.value = "";
         lastNameInput.value = "";
+        dobInput.value = "";
         signupPassword.value = "";
         confirm.value = "";
         loginEmail.value = "";
@@ -4782,6 +4798,7 @@
         const password = signupPassword.value;
         const firstName = firstNameInput.value.trim();
         const lastName = lastNameInput.value.trim();
+        const dob = dobInput.value;
         const profileUserName = normalizeProfileUserName(email);
 
         submit.disabled = true;
@@ -4805,6 +4822,7 @@
                 user_name: profileUserName,
                 first_name: firstName,
                 last_name: lastName,
+                date_of_birth: dob,
               },
             },
           });
@@ -4822,6 +4840,7 @@
                 userName: profileUserName,
                 firstName,
                 lastName,
+                dateOfBirth: dob,
               });
             } catch (_ignore) {
               /* showSession will retry */

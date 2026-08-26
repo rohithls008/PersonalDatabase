@@ -1,10 +1,10 @@
 -- Run this in Supabase → SQL Editor (once).
--- Maps Auth users (phone OTP) to public.user_profiles.
--- Phone number stays in Auth. user_id = auth.users.id. user_name comes from the app.
--- Enable Phone Provider in Supabase Dashboard: Authentication → Providers → Phone
+-- Maps Auth users (email) to public.user_profiles.
+-- Email stays in Auth. user_id = auth.users.id. user_name and dob come from the app.
+-- Enable Email Provider in Supabase Dashboard: Authentication → Providers → Email
 
--- Make date_of_birth nullable since it's no longer required in signup
-alter table public.user_profiles alter column date_of_birth drop not null;
+-- Ensure date_of_birth column is NOT NULL (required)
+alter table public.user_profiles alter column date_of_birth set not null;
 
 create unique index if not exists user_profiles_user_id_key
   on public.user_profiles (user_id);
