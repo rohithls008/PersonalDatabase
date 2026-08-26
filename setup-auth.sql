@@ -92,3 +92,101 @@ $$;
 
 revoke all on function public.user_id_taken(text) from public;
 grant execute on function public.user_id_taken(text) to anon, authenticated;
+
+-- Enable RLS for financial entries
+alter table public.expense_entries enable row level security;
+alter table public.income_entries enable row level security;
+alter table public.investment_entries enable row level security;
+
+-- Expense entries policies
+drop policy if exists "own expense select" on public.expense_entries;
+drop policy if exists "own expense insert" on public.expense_entries;
+drop policy if exists "own expense update" on public.expense_entries;
+drop policy if exists "own expense delete" on public.expense_entries;
+
+create policy "own expense select"
+  on public.expense_entries
+  for select
+  to authenticated
+  using (auth.uid() = user_id);
+
+create policy "own expense insert"
+  on public.expense_entries
+  for insert
+  to authenticated
+  with check (auth.uid() = user_id);
+
+create policy "own expense update"
+  on public.expense_entries
+  for update
+  to authenticated
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+create policy "own expense delete"
+  on public.expense_entries
+  for delete
+  to authenticated
+  using (auth.uid() = user_id);
+
+-- Income entries policies
+drop policy if exists "own income select" on public.income_entries;
+drop policy if exists "own income insert" on public.income_entries;
+drop policy if exists "own income update" on public.income_entries;
+drop policy if exists "own income delete" on public.income_entries;
+
+create policy "own income select"
+  on public.income_entries
+  for select
+  to authenticated
+  using (auth.uid() = user_id);
+
+create policy "own income insert"
+  on public.income_entries
+  for insert
+  to authenticated
+  with check (auth.uid() = user_id);
+
+create policy "own income update"
+  on public.income_entries
+  for update
+  to authenticated
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+create policy "own income delete"
+  on public.income_entries
+  for delete
+  to authenticated
+  using (auth.uid() = user_id);
+
+-- Investment entries policies
+drop policy if exists "own investment select" on public.investment_entries;
+drop policy if exists "own investment insert" on public.investment_entries;
+drop policy if exists "own investment update" on public.investment_entries;
+drop policy if exists "own investment delete" on public.investment_entries;
+
+create policy "own investment select"
+  on public.investment_entries
+  for select
+  to authenticated
+  using (auth.uid() = user_id);
+
+create policy "own investment insert"
+  on public.investment_entries
+  for insert
+  to authenticated
+  with check (auth.uid() = user_id);
+
+create policy "own investment update"
+  on public.investment_entries
+  for update
+  to authenticated
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+create policy "own investment delete"
+  on public.investment_entries
+  for delete
+  to authenticated
+  using (auth.uid() = user_id);
