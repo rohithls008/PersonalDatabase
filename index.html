@@ -1926,30 +1926,57 @@
         padding: 0.72rem 0.8rem;
       }
 
-      @media (max-width: 720px) {
+      @media (max-width: 1100px) {
         .home-topbar {
-          grid-template-columns: auto 1fr;
-          grid-template-rows: auto auto;
-          row-gap: 0.7rem;
+          display: grid;
+          grid-template-columns: auto minmax(0, 1fr) auto;
+          grid-template-areas: "menu title user";
+          align-items: center;
+          row-gap: 0.35rem;
           min-height: 0;
-          padding: 1.1rem var(--pad-x);
+          padding: 1.05rem var(--pad-x);
+        }
+
+        .home-menu-toggle {
+          grid-area: menu;
+          justify-self: start;
         }
 
         .home-topbar h1 {
-          grid-column: 2;
-          align-self: center;
+          grid-area: title;
+          justify-self: center;
           min-width: 0;
-          font-size: clamp(1.35rem, 6.5vw, 2rem);
+          font-size: clamp(1.3rem, 4.8vw, 2.2rem);
           line-height: 1.1;
-          text-align: left;
+          text-align: center;
           white-space: normal;
+          overflow-wrap: break-word;
         }
 
         .home-user-wrap {
-          grid-column: 1 / -1;
-          justify-self: start;
-          align-items: flex-start;
-          text-align: left;
+          grid-area: user;
+          justify-self: end;
+          align-items: flex-end;
+          text-align: right;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .home-topbar {
+          grid-template-columns: auto minmax(0, 1fr) auto;
+          padding: 1rem var(--pad-x);
+        }
+
+        .home-topbar h1 {
+          min-width: 0;
+          font-size: clamp(1.35rem, 6.5vw, 2rem);
+          line-height: 1.1;
+          white-space: normal;
+        }
+
+        .home-user-name,
+        .home-remaining {
+          white-space: normal;
         }
 
         .home-menu {
@@ -1980,36 +2007,6 @@
 
         .history-date-fields {
           width: 100%;
-        }
-      }
-
-      @media (max-width: 1100px) {
-        .home-topbar {
-          grid-template-columns: auto minmax(0, 1fr);
-          grid-template-rows: auto auto;
-          row-gap: 0.7rem;
-          min-height: 0;
-          padding: 1.1rem var(--pad-x);
-        }
-
-        .home-topbar h1 {
-          grid-column: 2;
-          grid-row: 1;
-          align-self: center;
-          min-width: 0;
-          font-size: clamp(1.3rem, 4.8vw, 2.2rem);
-          line-height: 1.1;
-          text-align: left;
-          white-space: normal;
-          overflow-wrap: break-word;
-        }
-
-        .home-user-wrap {
-          grid-column: 1 / -1;
-          grid-row: 2;
-          justify-self: start;
-          align-items: flex-start;
-          text-align: left;
         }
       }
 
