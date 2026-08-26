@@ -3,6 +3,9 @@
 -- Phone number stays in Auth. user_id = auth.users.id. user_name comes from the app.
 -- Enable Phone Provider in Supabase Dashboard: Authentication → Providers → Phone
 
+-- Make date_of_birth nullable since it's no longer required in signup
+alter table public.user_profiles alter column date_of_birth drop not null;
+
 create unique index if not exists user_profiles_user_id_key
   on public.user_profiles (user_id);
 
