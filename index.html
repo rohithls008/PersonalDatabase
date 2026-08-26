@@ -2565,7 +2565,7 @@
           <form id="auth-form" novalidate>
             <!-- LOGIN FIELDS -->
             <label class="login-only" id="login-email-label">
-              <span class="field-name">Email</span>
+              <span class="field-name">Email<span style="color: #dc2626;">*</span></span>
               <input
                 name="login_email"
                 type="email"
@@ -2577,13 +2577,13 @@
               />
             </label>
             <label class="login-only" id="login-password-label">
-              <span class="field-name">Password</span>
+              <span class="field-name">Password<span style="color: #dc2626;">*</span></span>
               <input name="login_password" type="password" autocomplete="current-password" minlength="6" required />
             </label>
 
             <!-- SIGNUP FIELDS -->
             <label id="email-label" class="confirm-only">
-              <span class="field-name">Email</span>
+              <span class="field-name">Email<span style="color: #dc2626;">*</span></span>
               <input
                 name="email"
                 type="email"
@@ -2596,50 +2596,26 @@
             </label>
             <div class="confirm-only name-row">
               <label>
-                <span class="field-name">First name</span>
+                <span class="field-name">First name<span style="color: #dc2626;">*</span></span>
                 <input name="first_name" autocomplete="given-name" maxlength="80" required />
               </label>
               <label>
-                <span class="field-name">Last name</span>
+                <span class="field-name">Last name<span style="color: #dc2626;">*</span></span>
                 <input name="last_name" autocomplete="family-name" maxlength="80" required />
               </label>
             </div>
             <div class="confirm-only password-row" hidden>
               <label>
-                <span class="field-name">Password</span>
+                <span class="field-name">Password<span style="color: #dc2626;">*</span></span>
                 <input name="signup_password" type="password" autocomplete="new-password" minlength="6" required disabled />
               </label>
               <label>
-                <span class="field-name">Confirm password</span>
+                <span class="field-name">Confirm password<span style="color: #dc2626;">*</span></span>
                 <input name="confirm" type="password" autocomplete="new-password" minlength="6" required disabled />
                 <span id="confirm-warning" class="field-warning" role="alert"></span>
               </label>
             </div>
-            <div class="confirm-only dob-wrap">
-              <span class="field-label">Date of birth</span>
-              <div class="dob-field">
-                <input name="dob" type="hidden" autocomplete="bday" />
-                <button type="button" id="dob-toggle" class="dob-toggle empty" aria-expanded="false">
-                  <span id="dob-toggle-text">Select a date</span>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.8" />
-                    <path d="M3 9h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-                  </svg>
-                </button>
-                <div id="dob-calendar" class="dob-calendar" hidden>
-                  <div class="dob-nav">
-                    <button type="button" id="dob-prev" aria-label="Previous month">‹</button>
-                    <select id="dob-month" aria-label="Month"></select>
-                    <select id="dob-year" aria-label="Year"></select>
-                    <button type="button" id="dob-next" aria-label="Next month">›</button>
-                  </div>
-                  <div class="dob-dow">
-                    <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
-                  </div>
-                  <div class="dob-days" id="dob-days"></div>
-                </div>
-              </div>
-            </div>
+
             <p id="login-status" class="form-status login-only" role="status"></p>
             <p id="signup-status" class="form-status confirm-only" role="status"></p>
             <button class="submit" type="submit" id="auth-submit">Log in</button>
@@ -3042,13 +3018,6 @@
       const emailInput = document.querySelector('input[name="email"]');
       const firstNameInput = document.querySelector('input[name="first_name"]');
       const lastNameInput = document.querySelector('input[name="last_name"]');
-      const dobInput = document.querySelector('input[name="dob"]');
-      const dobToggle = document.getElementById("dob-toggle");
-      const dobToggleText = document.getElementById("dob-toggle-text");
-      const dobCalendar = document.getElementById("dob-calendar");
-      const dobDays = document.getElementById("dob-days");
-      const dobMonth = document.getElementById("dob-month");
-      const dobYear = document.getElementById("dob-year");
       const sessionName = document.getElementById("session-name");
       const sessionId = document.getElementById("session-id");
       const toast = document.getElementById("toast");
@@ -3195,7 +3164,6 @@
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December",
       ];
-      let dobView = { year: 2000, month: 0 };
 
       const supabase = window.supabase
         ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
@@ -3261,127 +3229,14 @@
         return `${y}-${m}-${d}`;
       }
 
-      function ageOnDate(dobIso, today) {
-        const [y, m, d] = dobIso.split("-").map(Number);
-        const dob = new Date(y, m - 1, d);
-        let age = today.getFullYear() - dob.getFullYear();
-        const monthDelta = today.getMonth() - dob.getMonth();
-        if (monthDelta < 0 || (monthDelta === 0 && today.getDate() < dob.getDate())) {
-          age -= 1;
-        }
-        return age;
-      }
-
-      function setDobLimits() {
-        const today = new Date();
-        const oldest = new Date(today.getFullYear() - 120, today.getMonth(), today.getDate());
-        const adult = new Date(today.getFullYear() - MIN_AGE, today.getMonth(), today.getDate());
-        dobInput.min = isoDate(oldest);
-        dobInput.max = isoDate(adult);
-        if (!dobInput.value) {
-          dobView = { year: adult.getFullYear(), month: adult.getMonth() };
-        }
-        fillDobSelects();
-        renderDobDays();
-      }
-
-      function fillDobSelects() {
-        const minY = Number(dobInput.min.slice(0, 4));
-        const maxY = Number(dobInput.max.slice(0, 4));
-        dobMonth.innerHTML = MONTHS.map(
-          (name, i) => `<option value="${i}">${name}</option>`
-        ).join("");
-        dobYear.innerHTML = "";
-        for (let y = maxY; y >= minY; y -= 1) {
-          const opt = document.createElement("option");
-          opt.value = String(y);
-          opt.textContent = String(y);
-          dobYear.appendChild(opt);
-        }
-        dobMonth.value = String(dobView.month);
-        dobYear.value = String(dobView.year);
-      }
-
-      function formatDob(iso) {
-        const [y, m, d] = iso.split("-").map(Number);
-        return `${d} ${MONTHS[m - 1].slice(0, 3)} ${y}`;
-      }
-
-      function syncDobToggle() {
-        if (dobInput.value) {
-          dobToggleText.textContent = formatDob(dobInput.value);
-          dobToggle.classList.remove("empty");
-        } else {
-          dobToggleText.textContent = "Select a date";
-          dobToggle.classList.add("empty");
-        }
-      }
-
-      function openDobCalendar() {
-        setDobLimits();
-        if (dobInput.value) {
-          const [y, m] = dobInput.value.split("-").map(Number);
-          dobView = { year: y, month: m - 1 };
-          dobMonth.value = String(dobView.month);
-          dobYear.value = String(dobView.year);
-        }
-        renderDobDays();
-        dobCalendar.hidden = false;
-        dobToggle.setAttribute("aria-expanded", "true");
-      }
-
-      function closeDobCalendar() {
-        dobCalendar.hidden = true;
-        dobToggle.setAttribute("aria-expanded", "false");
-      }
-
-      function shiftDobMonth(delta) {
-        const date = new Date(dobView.year, dobView.month + delta, 1);
-        const minY = Number(dobInput.min.slice(0, 4));
-        const maxY = Number(dobInput.max.slice(0, 4));
-        let year = date.getFullYear();
-        year = Math.min(maxY, Math.max(minY, year));
-        dobView = { year, month: date.getMonth() };
-        dobMonth.value = String(dobView.month);
-        dobYear.value = String(dobView.year);
-        renderDobDays();
-      }
-
-      function renderDobDays() {
-        const min = dobInput.min;
-        const max = dobInput.max;
-        const first = new Date(dobView.year, dobView.month, 1);
-        const startPad = first.getDay();
-        const daysInMonth = new Date(dobView.year, dobView.month + 1, 0).getDate();
-        dobDays.innerHTML = "";
-        for (let i = 0; i < startPad; i += 1) {
-          const pad = document.createElement("span");
-          pad.className = "pad";
-          dobDays.appendChild(pad);
-        }
-        for (let day = 1; day <= daysInMonth; day += 1) {
-          const iso = isoDate(new Date(dobView.year, dobView.month, day));
-          const btn = document.createElement("button");
-          btn.type = "button";
-          btn.textContent = String(day);
-          btn.disabled = iso < min || iso > max;
-          if (iso === dobInput.value) btn.classList.add("selected");
-          btn.addEventListener("click", () => {
-            dobInput.value = iso;
-            dobInput.setCustomValidity("");
-            dobToggle.classList.remove("invalid");
-            syncDobToggle();
-            closeDobCalendar();
-          });
-          dobDays.appendChild(btn);
-        }
-      }
+      // DOB functions removed - date of birth is no longer part of signup
 
       function clearSignupFieldErrors() {
         emailInput.classList.remove("invalid");
         firstNameInput.classList.remove("invalid");
         lastNameInput.classList.remove("invalid");
-        dobToggle.classList.remove("invalid");
+        signupPassword.classList.remove("invalid");
+        confirm.classList.remove("invalid");
       }
 
       function validateSignupForm() {
@@ -3405,16 +3260,6 @@
         if (!lastName) {
           lastNameInput.classList.add("invalid");
           return "Enter your last name.";
-        }
-        setDobLimits();
-        const dob = dobInput.value;
-        if (!dob) {
-          dobToggle.classList.add("invalid");
-          return "Select your date of birth.";
-        }
-        if (ageOnDate(dob, new Date()) < MIN_AGE) {
-          dobToggle.classList.add("invalid");
-          return "You must be 18 or older to sign up.";
         }
         return null;
       }
@@ -3463,7 +3308,8 @@
           emailInput.required = true;
           firstNameInput.required = true;
           lastNameInput.required = true;
-          dobInput.required = true;
+          signupPassword.required = true;
+          confirm.required = true;
           loginEmail.required = false;
           loginPassword.required = false;
         } else {
@@ -3473,7 +3319,8 @@
           emailInput.required = false;
           firstNameInput.required = false;
           lastNameInput.required = false;
-          dobInput.required = false;
+          signupPassword.required = false;
+          confirm.required = false;
           loginEmail.required = true;
           loginPassword.required = true;
         }
@@ -3482,16 +3329,13 @@
         emailInput.value = "";
         firstNameInput.value = "";
         lastNameInput.value = "";
-        dobInput.value = "";
+        signupPassword.value = "";
+        confirm.value = "";
         loginEmail.value = "";
         loginPassword.value = "";
-        dobInput.setCustomValidity("");
         
         // Clear error states
-        emailInput.classList.remove("invalid");
-        firstNameInput.classList.remove("invalid");
-        lastNameInput.classList.remove("invalid");
-        dobToggle.classList.remove("invalid");
+        clearSignupFieldErrors();
         loginEmail.classList.remove("invalid");
         loginPassword.classList.remove("invalid");
         
@@ -3502,18 +3346,8 @@
         signupStatus.classList.remove("ok", "bad");
         
         showPasswordMismatch(false);
-        closeDobCalendar();
-        
-        document.getElementById("email-label").hidden = !signup;
-        document.getElementById("login-email-label").hidden = signup;
-        document.getElementById("login-password-label").hidden = signup;
         
         submit.hidden = false;
-        
-        if (signup) {
-          setDobLimits();
-          syncDobToggle();
-        }
       }
 
       function normalizeProfileUserName(raw, user) {
@@ -4870,27 +4704,14 @@
         showPasswordMismatch(!passwordsMatch());
       }
 
+      // Placeholder functions removed (DOB calendar functionality)
+
       signupPassword.addEventListener("input", checkConfirmLive);
       confirm.addEventListener("input", checkConfirmLive);
       [emailInput, firstNameInput, lastNameInput, signupPassword, confirm].forEach((field) => {
         field.addEventListener("input", () => field.classList.remove("invalid"));
       });
-      dobToggle.addEventListener("click", () => {
-        if (dobCalendar.hidden) openDobCalendar();
-        else closeDobCalendar();
-      });
-      document.getElementById("dob-prev").addEventListener("click", () => shiftDobMonth(-1));
-      document.getElementById("dob-next").addEventListener("click", () => shiftDobMonth(1));
-      dobMonth.addEventListener("change", () => {
-        dobView.month = Number(dobMonth.value);
-        renderDobDays();
-      });
-      dobYear.addEventListener("change", () => {
-        dobView.year = Number(dobYear.value);
-        renderDobDays();
-      });
       document.addEventListener("click", (event) => {
-        if (!event.target.closest(".dob-field")) closeDobCalendar();
         if (!event.target.closest(".home-menu, .home-menu-toggle")) setHomeMenuOpen(false);
       });
 
@@ -4961,7 +4782,6 @@
         const password = signupPassword.value;
         const firstName = firstNameInput.value.trim();
         const lastName = lastNameInput.value.trim();
-        const dob = dobInput.value;
         const profileUserName = normalizeProfileUserName(email);
 
         submit.disabled = true;
@@ -4985,7 +4805,6 @@
                 user_name: profileUserName,
                 first_name: firstName,
                 last_name: lastName,
-                date_of_birth: dob,
               },
             },
           });
@@ -5003,7 +4822,6 @@
                 userName: profileUserName,
                 firstName,
                 lastName,
-                dateOfBirth: dob,
               });
             } catch (_ignore) {
               /* showSession will retry */
@@ -5037,6 +4855,7 @@
         }
       }
 
+      // Initialize the app
       bootAuth();
     </script>
   </body>
