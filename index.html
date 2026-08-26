@@ -1929,12 +1929,18 @@
       @media (max-width: 720px) {
         .home-topbar {
           grid-template-columns: auto 1fr;
-          min-height: 6.5rem;
+          grid-template-rows: auto auto;
+          row-gap: 0.7rem;
+          min-height: 0;
           padding: 1.1rem var(--pad-x);
         }
 
         .home-topbar h1 {
           grid-column: 2;
+          align-self: center;
+          min-width: 0;
+          font-size: clamp(1.35rem, 6.5vw, 2rem);
+          line-height: 1.1;
           text-align: left;
           white-space: normal;
         }
@@ -3019,6 +3025,14 @@
           const { error } = await supabase.auth.signOut();
           if (error) throw error;
         } catch (err) {
+          const sessionAlreadyMissing =
+            err?.name === "AuthSessionMissingError" ||
+            err?.message === "Auth session missing!" ||
+            err?.code === "session_not_found";
+          if (sessionAlreadyMissing) {
+            await showSession(null);
+            return;
+          }
           showToast(err.message || "Could not sign out.");
           homeSignOutBtn.disabled = false;
         }
