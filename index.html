@@ -267,7 +267,7 @@
 
       label:has(input[required]) .field-name::after,
       .dob-wrap:has(input[required]) .field-label::after {
-        content: "*";
+        content: "";
         margin-left: 0.15em;
         color: #dc2626;
         font-weight: 700;
@@ -2565,7 +2565,7 @@
           <form id="auth-form" novalidate>
             <!-- LOGIN FIELDS -->
             <label class="login-only" id="login-email-label">
-              <span class="field-name">Email*</span>
+              <span class="field-name">Email</span>
               <input
                 name="login_email"
                 type="email"
@@ -2577,13 +2577,13 @@
               />
             </label>
             <label class="login-only" id="login-password-label">
-              <span class="field-name">Password*</span>
+              <span class="field-name">Password</span>
               <input name="login_password" type="password" autocomplete="current-password" minlength="6" required />
             </label>
 
             <!-- SIGNUP FIELDS -->
             <label id="email-label" class="confirm-only">
-              <span class="field-name">Email*</span>
+              <span class="field-name">Email</span>
               <input
                 name="email"
                 type="email"
