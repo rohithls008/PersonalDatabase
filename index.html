@@ -540,6 +540,10 @@
         line-height: 1.1;
       }
 
+      .home-topbar h1 span {
+        display: inline;
+      }
+
       .home-user-wrap {
         position: absolute;
         right: calc(var(--pad-x) + 5.5rem);
@@ -1742,7 +1746,9 @@
         position: sticky;
         min-height: 7.25rem;
         padding: 1.5rem var(--pad-x);
+        display: grid;
         grid-template-columns: auto auto 1fr;
+        column-gap: 0.65rem;
         background: linear-gradient(135deg, #24205f 0%, #3730a3 58%, #4f46e5 100%);
         box-shadow: 0 10px 28px rgba(30, 27, 75, 0.18);
       }
@@ -1802,6 +1808,10 @@
       }
 
       .home-menu .home-sign-out-btn {
+        position: static;
+        top: auto;
+        right: auto;
+        z-index: auto;
         width: 100%;
         margin: 0;
         border-color: #fecaca;
@@ -1818,6 +1828,7 @@
       .home-topbar h1 {
         font-size: clamp(1.55rem, 1.2rem + 1.6vw, 2.45rem);
         letter-spacing: 0.04em;
+        grid-column: 2;
         justify-self: start;
         text-align: left;
       }
@@ -1937,15 +1948,15 @@
       @media (max-width: 1100px) {
         .home-topbar {
           display: grid;
-          grid-template-columns: auto minmax(0, 1fr) auto;
+          grid-template-columns: auto minmax(0, 1fr);
           grid-template-rows: auto auto;
           grid-template-areas:
-            "title title"
-            "menu user";
+            "menu title"
+            ". user";
           align-items: center;
-          row-gap: 0.35rem;
+          row-gap: 0.55rem;
           min-height: 0;
-          padding: 1.05rem var(--pad-x);
+          padding: 1.6rem var(--pad-x) 1.7rem;
         }
 
         .home-menu-toggle {
@@ -1955,22 +1966,30 @@
 
         .home-topbar h1 {
           grid-area: title;
-          grid-column: 1 / -1;
-          justify-self: center;
+          justify-self: start;
           min-width: 0;
           font-size: clamp(1.2rem, 2.7vw, 1.9rem);
           line-height: 1.1;
-          text-align: center;
+          text-align: left;
           white-space: normal;
           overflow-wrap: break-word;
         }
 
+        .home-topbar h1 span {
+          display: block;
+        }
+
         .home-user-wrap {
+          position: static;
+          top: auto;
+          right: auto;
+          transform: none;
           grid-area: user;
           justify-self: end;
           align-items: flex-end;
           text-align: right;
           max-width: 100%;
+          margin-left: auto;
         }
 
         .home-user-name {
@@ -1984,8 +2003,8 @@
 
       @media (max-width: 720px) {
         .home-topbar {
-          grid-template-columns: auto minmax(0, 1fr) auto;
-          padding: 1rem var(--pad-x);
+          grid-template-columns: auto minmax(0, 1fr);
+          padding: 1.7rem var(--pad-x) 1.85rem;
         }
 
         .home-topbar h1 {
@@ -1993,6 +2012,16 @@
           font-size: clamp(1.05rem, 5.2vw, 1.55rem);
           line-height: 1.1;
           white-space: normal;
+          text-align: left;
+        }
+
+        .home-user-wrap {
+          position: static;
+          top: auto;
+          right: auto;
+          transform: none;
+          margin-left: auto;
+          justify-self: end;
         }
 
         .home-user-name {
@@ -2531,11 +2560,11 @@
             <path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round" />
           </svg>
         </button>
-        <h1>Personal Finance</h1>
+        <h1><span>Personal</span> <span>Finance</span></h1>
         <div class="home-user-wrap">
           <span id="home-user-name" class="home-user-name"></span>
           <p id="home-remaining" class="home-remaining" hidden>
-            <span class="home-remaining-label">Available Balance:</span>
+            <span class="home-remaining-label">Balance:</span>
             <span id="home-remaining-amount" class="home-remaining-amount zero">₹0</span>
           </p>
         </div>
