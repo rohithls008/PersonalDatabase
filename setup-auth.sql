@@ -19,7 +19,7 @@ security definer
 set search_path = public
 as $$
 begin
-  insert into public.user_profiles (user_id, user_name, first_name, last_name, email)
+  insert into public.user_profiles (user_id, user_name, first_name, last_name, email, date_of_birth)
   values (
     new.id,
     left(
@@ -33,13 +33,15 @@ begin
     ),
     nullif(new.raw_user_meta_data->>'first_name', ''),
     nullif(new.raw_user_meta_data->>'last_name', ''),
-    nullif(new.raw_user_meta_data->>'email', '')
+    nullif(new.raw_user_meta_data->>'email', ''),
+    nullif(new.raw_user_meta_data->>'date_of_birth', '')::date
   )
   on conflict (user_id) do update
     set user_name = excluded.user_name,
         first_name = coalesce(excluded.first_name, public.user_profiles.first_name),
         last_name = coalesce(excluded.last_name, public.user_profiles.last_name),
         email = coalesce(excluded.email, public.user_profiles.email),
+        date_of_birth = coalesce(excluded.date_of_birth, public.user_profiles.date_of_birth),
         updated_at = now();
   return new;
 end;
