@@ -46,30 +46,9 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
 
--- Do not require email confirmation for this personal app.
-update auth.users
-set email_confirmed_at = now()
-where email_confirmed_at is null;
-
-create or replace function public.confirm_user_email()
-returns trigger
-language plpgsql
-security definer
-set search_path = ''
-as $$
-begin
-  update auth.users
-  set email_confirmed_at = now()
-  where id = new.id
-    and email_confirmed_at is null;
-  return new;
-end;
-$$;
-
+-- In Supabase Dashboard, enable Authentication -> Providers -> Email -> Confirm email.
+-- The app sends Supabase's confirmation email and blocks unconfirmed users from the dashboard.
 drop trigger if exists on_auth_user_auto_confirm on auth.users;
-create trigger on_auth_user_auto_confirm
-  after insert on auth.users
-  for each row execute procedure public.confirm_user_email();
 
 alter table public.user_profiles enable row level security;
 

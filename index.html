@@ -3445,7 +3445,7 @@
           return "User id already exists";
         }
         if (lower.includes("email not confirmed")) {
-          return "Email is not confirmed. Turn Confirm email off in Supabase, then try again.";
+          return "Email is not confirmed. Check your inbox and confirm your email before logging in.";
         }
         if (signup && raw) return raw;
         return signup ? (raw || "Sign up failed.") : INVALID_LOGIN;
@@ -3462,7 +3462,7 @@
         signupTab.setAttribute("aria-selected", String(signup));
         title.textContent = signup ? "Create your account" : "Welcome back";
         hint.textContent = signup
-          ? "Required fields marked with *. Email is your user id. Must be 18+."
+          ? "Required fields marked with *. Email is your user id. Must be 18+. A confirmation email will be sent."
           : "Use your email and password to continue.";
         submit.textContent = signup ? "Sign up" : "Log in";
         emailInput.required = true;
@@ -4576,14 +4576,23 @@
           updateTransactionDateFilterStatus();
           return;
         }
-        currentUser = await resolveCurrentUser(session.user);
+        const { data: userData, error: userError } = await supabase.auth.getUser();
+        const user = userData?.user || session.user;
+        if (userError || !user?.email_confirmed_at) {
+          currentUser = null;
+          document.body.classList.remove("on-home");
+          setMode("login");
+          setStatus("Please confirm your email before entering your dashboard.", "bad");
+          return;
+        }
+        currentUser = await resolveCurrentUser(user);
         try {
-          await ensureProfileForUser(session.user);
-          currentUser = await resolveCurrentUser(session.user);
+          await ensureProfileForUser(user);
+          currentUser = await resolveCurrentUser(user);
         } catch (err) {
           console.warn("Could not ensure user profile:", err);
         }
-        homeUserName.textContent = await loadProfileDisplayName(session.user);
+        homeUserName.textContent = await loadProfileDisplayName(user);
         document.body.classList.add("on-home");
         setStatus("");
         await loadHomeChart();
@@ -4953,17 +4962,8 @@
             if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
               throw new Error("User id already exists");
             }
-            let session = data.session;
-            const user = session?.user || data.user;
-            if (!session && user) {
-              const signedIn = await supabase.auth.signInWithPassword({
-                email,
-                password: signupPassword.value,
-              });
-              if (signedIn.error) throw signedIn.error;
-              session = signedIn.data.session;
-            }
-            if (session?.user) {
+            if (data.user && data.session) {
+              const session = data.session;
               try {
                 await ensureProfileForUser(session.user, {
                   userName: profileUserName,
@@ -4975,8 +4975,11 @@
                 /* showSession will retry profile setup */
               }
               await finishAuthSuccess(session, "Sign up successful");
+            } else if (data.user) {
+              clearAuthWarnings();
+              setStatus("Check your email and click the confirmation link before logging in.", "good");
             } else {
-              throw new Error("Sign up did not return a session.");
+              throw new Error("Sign up did not create an account.");
             }
           }
         } catch (err) {
