@@ -2728,7 +2728,7 @@
                     </label>
                     <label>
                       <span class="field-name">Amount (₹)</span>
-                      <input type="number" name="expense_amount" min="1" step="1" required placeholder="0" />
+                      <input type="number" name="expense_amount" min="0.01" step="any" inputmode="decimal" required placeholder="0" />
                     </label>
                     <label>
                       <span class="field-name">Payment</span>
@@ -3125,7 +3125,7 @@
       const HISTORY_FIELDS = {
         expense: [
           { key: "expense_type", kind: "select", options: EXPENSE_CATEGORY_OPTIONS, editable: true },
-          { key: "expense_amount", kind: "number", editable: true, integer: true },
+          { key: "expense_amount", kind: "number", editable: true },
           { key: "payment_method", kind: "select", options: PAYMENT_METHOD_OPTIONS, editable: true },
           { key: "expense_notes", kind: "text", editable: true },
           { key: "updated_at", kind: "date", editable: false },
