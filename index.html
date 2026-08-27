@@ -2953,6 +2953,7 @@
                 <thead>
                   <tr>
                     <th scope="col">Category</th>
+                    <th scope="col">Ticker Symbol</th>
                     <th scope="col">Asset Name</th>
                     <th scope="col">Account</th>
                     <th scope="col">Transaction type</th>
@@ -3138,6 +3139,7 @@
         ],
         investment: [
           { key: "investment_type", kind: "select", options: INVESTMENT_CATEGORY_OPTIONS, editable: true },
+          { key: "ticker_symbol", kind: "text", editable: true },
           { key: "asset_name", kind: "text", editable: true },
           { key: "investment_account", kind: "select", options: INVESTMENT_ACCOUNT_OPTIONS, editable: true },
           { key: "transaction_type", kind: "select", options: TRANSACTION_TYPE_OPTIONS, editable: true },
@@ -3954,6 +3956,7 @@
           return "";
         }
         if (!payload.investment_type) return "Choose a category.";
+        if (!payload.ticker_symbol) return "Enter a ticker symbol.";
         if (!payload.asset_name) return "Enter an asset name.";
         if (!payload.investment_account) return "Choose an account.";
         if (!payload.transaction_type) return "Choose a transaction type.";
@@ -3963,7 +3966,6 @@
         if (!Number.isFinite(payload.investment_unit_price) || payload.investment_unit_price <= 0) {
           return "Enter a valid unit price.";
         }
-        if (!originalRow?.ticker_symbol) return "Missing ticker symbol for this row.";
         return "";
       }
 
@@ -3987,7 +3989,6 @@
           payload.currency = "INR";
         } else {
           payload.currency = "INR";
-          payload.ticker_symbol = originalRow.ticker_symbol;
         }
         payload.updated_at = new Date().toISOString();
 
