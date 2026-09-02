@@ -461,7 +461,7 @@
 
       .toast {
         position: fixed;
-        top: max(1rem, env(safe-area-inset-top));
+        top: var(--toast-top, max(1rem, env(safe-area-inset-top)));
         left: 50%;
         z-index: 40;
         max-width: min(22rem, calc(100vw - 2rem));
@@ -3192,12 +3192,22 @@
       }
 
       function showToast(message) {
+        positionToast();
         toast.textContent = message;
         toast.classList.add("show");
         window.clearTimeout(toastTimer);
         toastTimer = window.setTimeout(() => {
           toast.classList.remove("show");
         }, 2800);
+      }
+
+      function positionToast() {
+        const topbar = document.querySelector(".home-topbar");
+        if (document.body.classList.contains("on-home") && topbar) {
+          toast.style.setProperty("--toast-top", `${Math.ceil(topbar.getBoundingClientRect().bottom)}px`);
+        } else {
+          toast.style.removeProperty("--toast-top");
+        }
       }
 
       function clearAuthWarnings() {
@@ -3227,8 +3237,8 @@
 
       async function finishAuthSuccess(session, message) {
         clearAuthWarnings();
-        showToast(message);
         await showSession(session);
+        showToast(message);
       }
 
       function isoDate(date) {
@@ -3537,6 +3547,14 @@
           REQUEST_TIMEOUT_MS,
           "Save timed out. Check your connection and try again."
         );
+      }
+
+      async function refreshDashboardAfterSave() {
+        try {
+          await loadHomeChart();
+        } catch (err) {
+          console.warn("Entry saved, but dashboard refresh failed:", err);
+        }
       }
 
       function formatInr(amount) {
@@ -4273,6 +4291,7 @@
       }
 
       window.addEventListener("resize", () => {
+        positionToast();
         if (document.body.classList.contains("on-home")) {
           renderHomeCharts();
         }
@@ -4544,7 +4563,7 @@
         expenseFormStatus.textContent = "";
         expenseFormStatus.className = "form-status";
 
-        if (!supabase || !currentUser?.id) {
+        if (!supabase) {
           expenseFormStatus.textContent = "Sign in to add expenses.";
           expenseFormStatus.className = "form-status bad";
           return;
@@ -4576,7 +4595,7 @@
             if (error) throw error;
             expenseForm.reset();
             showToast("Expense added");
-            await loadHomeChart();
+            await refreshDashboardAfterSave();
           } catch (err) {
             expenseFormStatus.textContent = err.message || "Could not save expense.";
             expenseFormStatus.className = "form-status bad";
@@ -4594,7 +4613,7 @@
         incomeFormStatus.textContent = "";
         incomeFormStatus.className = "form-status";
 
-        if (!supabase || !currentUser?.id) {
+        if (!supabase) {
           incomeFormStatus.textContent = "Sign in to add income.";
           incomeFormStatus.className = "form-status bad";
           return;
@@ -4631,7 +4650,7 @@
             if (error) throw error;
             incomeForm.reset();
             showToast("Income added");
-            await loadHomeChart();
+            await refreshDashboardAfterSave();
           } catch (err) {
             incomeFormStatus.textContent = err.message || "Could not save income.";
             incomeFormStatus.className = "form-status bad";
@@ -4649,7 +4668,7 @@
         investmentFormStatus.textContent = "";
         investmentFormStatus.className = "form-status";
 
-        if (!supabase || !currentUser?.id) {
+        if (!supabase) {
           investmentFormStatus.textContent = "Sign in to add investments.";
           investmentFormStatus.className = "form-status bad";
           return;
@@ -4700,7 +4719,7 @@
             if (error) throw error;
             investmentForm.reset();
             showToast("Investment added");
-            await loadHomeChart();
+            await refreshDashboardAfterSave();
           } catch (err) {
             investmentFormStatus.textContent = err.message || "Could not save investment.";
             investmentFormStatus.className = "form-status bad";
