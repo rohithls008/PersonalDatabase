@@ -4583,28 +4583,31 @@
 
         const addBtn = expenseForm.querySelector('button[type="submit"]');
         addBtn.disabled = true;
-        const ran = await runExclusive(expenseFormLock, async () => {
-          try {
-            const { error } = await insertFinancialRow("expense_entries", {
-              expense_type: expenseType,
-              expense_amount: expenseAmount,
-              currency: "INR",
-              payment_method: paymentMethod,
-              expense_notes: expenseNotes,
-            });
-            if (error) throw error;
-            expenseForm.reset();
-            showToast("Expense added");
-            await refreshDashboardAfterSave();
-          } catch (err) {
-            expenseFormStatus.textContent = err.message || "Could not save expense.";
-            expenseFormStatus.className = "form-status bad";
+        try {
+          const ran = await runExclusive(expenseFormLock, async () => {
+            try {
+              const { error } = await insertFinancialRow("expense_entries", {
+                expense_type: expenseType,
+                expense_amount: expenseAmount,
+                currency: "INR",
+                payment_method: paymentMethod,
+                expense_notes: expenseNotes,
+              });
+              if (error) throw error;
+              expenseForm.reset();
+              showToast("Expense added");
+              await refreshDashboardAfterSave();
+            } catch (err) {
+              expenseFormStatus.textContent = err.message || "Could not save expense.";
+              expenseFormStatus.className = "form-status bad";
+            }
+          });
+          if (!ran) {
+            showToast("Expense save already in progress.");
           }
-        });
-        if (!ran) {
-          showToast("Expense save already in progress.");
+        } finally {
+          addBtn.disabled = false;
         }
-        addBtn.disabled = false;
       });
 
       incomeForm.addEventListener("submit", async (event) => {
@@ -4638,28 +4641,31 @@
 
         const addBtn = incomeForm.querySelector('button[type="submit"]');
         addBtn.disabled = true;
-        const ran = await runExclusive(incomeFormLock, async () => {
-          try {
-            const { error } = await insertFinancialRow("income_entries", {
-              income_type: incomeType,
-              income_amount: incomeAmount,
-              income_source: incomeSource,
-              currency: "INR",
-              income_notes: incomeNotes,
-            });
-            if (error) throw error;
-            incomeForm.reset();
-            showToast("Income added");
-            await refreshDashboardAfterSave();
-          } catch (err) {
-            incomeFormStatus.textContent = err.message || "Could not save income.";
-            incomeFormStatus.className = "form-status bad";
+        try {
+          const ran = await runExclusive(incomeFormLock, async () => {
+            try {
+              const { error } = await insertFinancialRow("income_entries", {
+                income_type: incomeType,
+                income_amount: incomeAmount,
+                income_source: incomeSource,
+                currency: "INR",
+                income_notes: incomeNotes,
+              });
+              if (error) throw error;
+              incomeForm.reset();
+              showToast("Income added");
+              await refreshDashboardAfterSave();
+            } catch (err) {
+              incomeFormStatus.textContent = err.message || "Could not save income.";
+              incomeFormStatus.className = "form-status bad";
+            }
+          });
+          if (!ran) {
+            showToast("Income save already in progress.");
           }
-        });
-        if (!ran) {
-          showToast("Income save already in progress.");
+        } finally {
+          addBtn.disabled = false;
         }
-        addBtn.disabled = false;
       });
 
       investmentForm.addEventListener("submit", async (event) => {
@@ -4703,32 +4709,35 @@
 
         const addBtn = investmentForm.querySelector('button[type="submit"]');
         addBtn.disabled = true;
-        const ran = await runExclusive(investmentFormLock, async () => {
-          try {
-            const { error } = await insertFinancialRow("investment_entries", {
-              investment_type: investmentType,
-              ticker_symbol: tickerSymbol,
-              asset_name: assetName,
-              investment_account: investmentAccount,
-              transaction_type: transactionType,
-              investment_quantity: investmentQuantity,
-              investment_unit_price: investmentUnitPrice,
-              currency: "INR",
-              investment_notes: investmentNotes,
-            });
-            if (error) throw error;
-            investmentForm.reset();
-            showToast("Investment added");
-            await refreshDashboardAfterSave();
-          } catch (err) {
-            investmentFormStatus.textContent = err.message || "Could not save investment.";
-            investmentFormStatus.className = "form-status bad";
+        try {
+          const ran = await runExclusive(investmentFormLock, async () => {
+            try {
+              const { error } = await insertFinancialRow("investment_entries", {
+                investment_type: investmentType,
+                ticker_symbol: tickerSymbol,
+                asset_name: assetName,
+                investment_account: investmentAccount,
+                transaction_type: transactionType,
+                investment_quantity: investmentQuantity,
+                investment_unit_price: investmentUnitPrice,
+                currency: "INR",
+                investment_notes: investmentNotes,
+              });
+              if (error) throw error;
+              investmentForm.reset();
+              showToast("Investment added");
+              await refreshDashboardAfterSave();
+            } catch (err) {
+              investmentFormStatus.textContent = err.message || "Could not save investment.";
+              investmentFormStatus.className = "form-status bad";
+            }
+          });
+          if (!ran) {
+            showToast("Investment save already in progress.");
           }
-        });
-        if (!ran) {
-          showToast("Investment save already in progress.");
+        } finally {
+          addBtn.disabled = false;
         }
-        addBtn.disabled = false;
       });
 
       function checkConfirmLive() {
